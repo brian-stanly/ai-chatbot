@@ -1,5 +1,9 @@
 <div class="chat-window">
-  <div class="messages-container">
+  <div
+    class="messages-container"
+    #messagesContainer
+    (scroll)="onScroll($event)"
+  >
     <!-- Empty state -->
     <div class="empty-state" *ngIf="messages.length === 0 && !isLoading">
       <div class="empty-icon">
@@ -34,4 +38,17 @@
 
     <div #scrollAnchor></div>
   </div>
+
+  <!-- Scroll to Top button -->
+  <button
+    class="scroll-top-btn"
+    *ngIf="showScrollTop"
+    (click)="scrollToTop()"
+    title="Scroll to first prompt"
+  >
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 15.75l7.5-7.5 7.5 7.5" />
+    </svg>
+    <span>First Prompt</span>
+  </button>
 </div>

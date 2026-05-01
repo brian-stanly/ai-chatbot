@@ -23,8 +23,10 @@ export class ChatWindowComponent implements OnChanges, AfterViewChecked {
   @Input() isLoading = false;
 
   @ViewChild('scrollAnchor') private scrollAnchor!: ElementRef;
+  @ViewChild('messagesContainer') private messagesContainer!: ElementRef;
 
   private shouldScroll = false;
+  showScrollTop = false;
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['messages'] || changes['isLoading']) {
@@ -39,9 +41,24 @@ export class ChatWindowComponent implements OnChanges, AfterViewChecked {
     }
   }
 
+  onScroll(event: Event): void {
+    const element = event.target as HTMLElement;
+    // Show button if we've scrolled down more than 300px
+    this.showScrollTop = element.scrollTop > 300;
+  }
+
   private scrollToBottom(): void {
     try {
       this.scrollAnchor.nativeElement.scrollIntoView({ behavior: 'smooth' });
+    } catch {}
+  }
+
+  scrollToTop(): void {
+    try {
+      this.messagesContainer.nativeElement.scrollTo({
+        top: 0,
+        behavior: 'smooth',
+      });
     } catch {}
   }
 
