@@ -3,6 +3,26 @@
 ## Project Preview
 A full-stack AI chatbot built with **FastAPI** (backend) and **Angular** (frontend), powered by **LangChain** and **Mistral-7B** from Hugging Face.
 
+## Project Architecture
+
+```
+┌───────────────────┐
+│   Angular App     │
+│ (User Interface)  │
+└─────────┬─────────┘
+          │ REST API (Axios)
+          ▼
+┌───────────────────┐
+│    FastAPI        │
+│     Backend       │
+└─────────┬─────────┘
+          │ LangChain
+          ▼
+┌───────────────────┐
+│ Hugging Face      │
+│  Mistral-7B LLM   │
+└───────────────────┘
+```
 
 ## Project Structure
 ```
