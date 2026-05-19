@@ -22,14 +22,14 @@ class ChatResponse(BaseModel):
 class ChatInput(BaseModel):
     content: str
 
-class ConverstionCreate(BaseModel):
+class ConversationCreate(BaseModel):
     title: Optional[str] = "New Converstion"
 
 class ConversationTitleUpdate(BaseModel):
     title: str
 
 
-class ConverstationResponse(BaseModel):
+class ConversationResponse(BaseModel):
     id: str
     title: str
     created_at: datetime.datetime
