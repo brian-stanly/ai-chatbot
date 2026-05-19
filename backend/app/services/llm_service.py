@@ -1,63 +1,36 @@
-import os
 from typing import List
 
-from transformers import pipeline
-from langchain_huggingface import HuggingFacePipeline, ChatHuggingFace
-from langchain_core.messages import SystemMessage, HumanMessage, AIMessage
-from fastapi.concurrency import run_in_threadpool
+from dotenv import load_dotenv
+from langchain_groq import ChatGroq
+from langchain_core.messages import HumanMessage, SystemMessage, AIMessage
 
 from app.models.schemas import Message
 
-# Use a small, fast model
-MODEL_ID = "TinyLlama/TinyLlama-1.1B-Chat-v1.0"
+# Load environment variables from .env file
+load_dotenv()
 
-SYSTEM_PROMPT = (
-    "You are a helpful and friendly AI assistant. "
-    "Respond to the user's messages in a natural, conversational way. "
-    "Keep your answers helpful and relevant to the conversation."
-)
+MODEL_ID = "llama-3.3-70b-versatile"
 
 
-# Lazily initialized model
-_llm = None
-
-async def get_chat_response(history: List[Message], user_message: str) -> str:
+async def get_chat_response(messages: List[Message]) -> str:
     """
     Send user message (with conversation history) to the LLM
     and return the assistant's reply as a string.
     """
-    global _llm
 
-    if _llm is None:
-        # Initialize model if not already done
-        llm_wrapper = pipeline(
-            "text-generation",
-            model=  MODEL_ID,
-            max_new_tokens=100,
-            device="cpu",  # Use CPU for better compatibility in this environment
-            return_full_text=False,
-        )
+    llm = ChatGroq(temperature=0.0, model_name=MODEL_ID)
 
-        llm = HuggingFacePipeline(pipeline=llm_wrapper)
-        _llm = ChatHuggingFace(llm=llm, model=MODEL_ID)
-    
+    system_message = SystemMessage(content=("You are a professional brand name strategist, creative consultant, and business advisor.\
+            Help the user brainstorm, refine, and evaluate unique company names, product concepts. "))
 
-    messages = [SystemMessage(content=SYSTEM_PROMPT)]
+    prompt_template = [system_message]
 
-    for msg in history:
+    for msg in messages:
         if msg.role == "user":
-            messages.append(HumanMessage(content=msg.content))
+            prompt_template.append(HumanMessage(content=msg.content))
         elif msg.role == "assistant":
-            messages.append(AIMessage(content=msg.content))
-    
-    messages.append(HumanMessage(content=user_message))
+            prompt_template.append(AIMessage(content=msg.content))
 
-    # Run heavy synchronous inference in a thread pool
-    def _invoke():
-        return _llm.invoke(messages)
 
-    response = await run_in_threadpool(_invoke)
-    reply = response.content.strip()
-
-    print(f"LLM Response: '{reply}'")
-    return reply
+    response = llm.invoke(prompt_template)
+    return response.content

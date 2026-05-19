@@ -36,12 +36,12 @@ export class App {
     // Optimistically add user message
     this.messages = [...this.messages, { role: 'user', content: text }];
 
-    this.chatService.sendMessage(text, this.getHistoryWithoutLast()).subscribe({
+    this.chatService.sendMessage(text).subscribe({
       next: (res) => {
         console.log('Received response:', res);
         this.messages = [
           ...this.messages,
-          { role: 'assistant', content: res.response },
+          { role: 'assistant', content: `Recommended Brand Name: ${res.companyName}` },
         ];
         this.isLoading = false;
         this.cdr.detectChanges();
@@ -54,11 +54,6 @@ export class App {
         this.cdr.detectChanges();
       },
     });
-  }
-
-  /** Returns history without the optimistically added user message (backend builds it). */
-  private getHistoryWithoutLast(): Message[] {
-    return this.messages.slice(0, -1);
   }
 
   onKeyDown(event: KeyboardEvent): void {

@@ -38,8 +38,8 @@
           </svg>
         </div>
         <div class="model-text">
-          <span class="model-name">AI Assistant</span>
-          <span class="model-sub">Powered by Mistral-7B</span>
+          <span class="model-name">Brand Name Generator</span>
+          <span class="model-sub">Powered by Llama-3.3 on Groq</span>
         </div>
         <span class="status-badge">Online</span>
       </div>
@@ -70,7 +70,7 @@
           id="chat-input"
           [(ngModel)]="userInput"
           (keydown)="onKeyDown($event)"
-          placeholder="Message AI Assistant..."
+          placeholder="Describe your product (e.g. 'a solar-powered coffee maker')..."
           rows="1"
           [disabled]="isLoading"
           autocomplete="off"

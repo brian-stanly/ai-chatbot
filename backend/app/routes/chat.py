@@ -1,29 +1,31 @@
 from fastapi import APIRouter, HTTPException
-from app.models.schemas import ChatRequest, ChatResponse, Message
+from app.models.schemas import ChatRequest, ChatResponse
 from app.services.llm_service import get_chat_response
 
 router = APIRouter(prefix="/api", tags=["chat"])
 
 
-@router.post("/chat", response_model=ChatResponse)
+@router.post("/v1/chat", response_model=ChatResponse)
 async def chat(request: ChatRequest) -> ChatResponse:
     """
     Send a message to the chatbot and receive a response.
 
-    - **message**: The user's current message.
-    - **history**: Previous conversation messages (optional).
+    - **product**: The product description.
+
     """
     try:
-        reply = await get_chat_response(
-            history=request.history,
-            user_message=request.message,
+
+        companyName = await get_chat_response(
+            messages=request.messages,
         )
+        return ChatResponse(companyName=companyName)
+
     except RuntimeError as e:
         raise HTTPException(status_code=500, detail=str(e))
+        
     except Exception as e:
         error_msg = str(e)
-        detail = "LLM service unavailable."
-        
+                
         if "403" in error_msg:
             detail = "LLM Permission Denied: Your Hugging Face token lacks sufficient permissions. Please ensure it has the 'Make calls to the serverless Inference API' permission."
         elif "429" in error_msg:
@@ -38,16 +40,9 @@ async def chat(request: ChatRequest) -> ChatResponse:
             detail=detail,
         )
 
-    # Build updated history to return to the frontend
-    updated_history = list(request.history) + [
-        Message(role="user", content=request.message),
-        Message(role="assistant", content=reply),
-    ]
-
-    return ChatResponse(response=reply, history=updated_history)
 
 
-@router.get("/health")
+@router.get("/v1/health")
 async def health_check():
     """Simple health check endpoint."""
     return {"status": "ok", "model": "mistralai/Mistral-7B-Instruct-v0.3"}

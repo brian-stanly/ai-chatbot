@@ -2,31 +2,25 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
-export interface Message {
-  role: 'user' | 'assistant';
-  content: string;
-}
 
 export interface ChatRequest {
-  message: string;
-  history: Message[];
+  product: string;
 }
 
 export interface ChatResponse {
-  response: string;
-  history: Message[];
+  companyName: string;
 }
 
 @Injectable({
   providedIn: 'root',
 })
 export class ChatService {
-  private readonly apiUrl = 'http://localhost:8000/api/chat';
+  private readonly apiUrl = 'http://localhost:8000/api/v1/chat';
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
-  sendMessage(message: string, history: Message[]): Observable<ChatResponse> {
-    const body: ChatRequest = { message, history };
+  sendMessage(product: string): Observable<ChatResponse> {
+    const body: ChatRequest = { product };
     return this.http.post<ChatResponse>(this.apiUrl, body);
   }
 }
