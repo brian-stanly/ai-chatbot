@@ -1,6 +1,7 @@
 import os
 from pathlib import Path
 from dotenv import load_dotenv
+# import dj_database_url  # Removed: not needed for SQLite
 
 # Load env variables from .env
 load_dotenv()
@@ -61,11 +62,11 @@ WSGI_APPLICATION = 'app.wsgi.application'
 ASGI_APPLICATION = 'app.asgi.application'
 
 # Database
-# Recreating SQLite setup from FastAPI
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'chatbot.db',
+
     }
 }
 
