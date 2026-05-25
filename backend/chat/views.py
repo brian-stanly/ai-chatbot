@@ -3,7 +3,7 @@ import logging
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 
-from app.services.llm_service import get_chat_response
+from chat.services.llm_service import get_chat_response
 from app.models.schemas import Message as SchemaMessage
 
 logger = logging.getLogger(__name__)

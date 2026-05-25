@@ -31,6 +31,5 @@ async def get_chat_response(messages: List[Message]) -> str:
         elif msg.role == "assistant":
             prompt_template.append(AIMessage(content=msg.content))
 
-
     response = llm.invoke(prompt_template)
     return response.content
