@@ -1,9 +1,8 @@
-fastapi
-uvicorn[standard]
+django
+djangorestframework
+django-cors-headers
 langchain
 langchain-core
-langchain-huggingface
-huggingface_hub
+langchain-groq
 python-dotenv
 pydantic
-sqlalchemy==2.0.49

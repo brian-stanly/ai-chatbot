@@ -11,6 +11,11 @@ export interface ChatResponse {
   companyName: string;
 }
 
+export interface Message {
+  role: 'user' | 'assistant';
+  content: string;
+}
+
 @Injectable({
   providedIn: 'root',
 })
