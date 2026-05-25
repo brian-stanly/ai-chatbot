@@ -4,7 +4,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 
 from chat.services.llm_service import get_chat_response
-from app.models.schemas import Message as SchemaMessage
+from .serializers import MessageSerializer as SchemaMessage
 
 logger = logging.getLogger(__name__)
 
