@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 from langchain_groq import ChatGroq
 from langchain_core.messages import HumanMessage, SystemMessage, AIMessage
 
-from .serializers import Message
+from chat.serializers import Message
 
 # Load environment variables from .env file
 load_dotenv()
