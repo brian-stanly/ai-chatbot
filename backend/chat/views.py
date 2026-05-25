@@ -6,7 +6,6 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
 from drf_yasg.utils import swagger_auto_schema
-from drf_yasg import openapi
 
 from chat.services.llm_service import get_chat_response
 from .serializers import ChatRequestSerializer, ChatResponseSerializer

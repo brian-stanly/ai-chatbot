@@ -36,12 +36,12 @@ export class App {
     // Optimistically add user message
     this.messages = [...this.messages, { role: 'user', content: text }];
 
-    this.chatService.sendMessage(text).subscribe({
+    this.chatService.sendMessage(this.messages).subscribe({
       next: (res) => {
         console.log('Received response:', res);
         this.messages = [
           ...this.messages,
-          { role: 'assistant', content: `Recommended Brand Name: ${res.companyName}` },
+          { role: 'assistant', content: res.reply },
         ];
         this.isLoading = false;
         this.cdr.detectChanges();

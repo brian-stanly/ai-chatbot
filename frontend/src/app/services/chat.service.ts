@@ -4,11 +4,11 @@ import { Observable } from 'rxjs';
 
 
 export interface ChatRequest {
-  product: string;
+  messages: Message[];
 }
 
 export interface ChatResponse {
-  companyName: string;
+  reply: string;
 }
 
 export interface Message {
@@ -20,12 +20,12 @@ export interface Message {
   providedIn: 'root',
 })
 export class ChatService {
-  private readonly apiUrl = 'http://localhost:8000/api/v1/chat';
+  private readonly apiUrl = 'http://localhost:8000/api/v1/chat/';
 
   constructor(private http: HttpClient) { }
 
-  sendMessage(product: string): Observable<ChatResponse> {
-    const body: ChatRequest = { product };
+  sendMessage(messages: Message[]): Observable<ChatResponse> {
+    const body: ChatRequest = { messages };
     return this.http.post<ChatResponse>(this.apiUrl, body);
   }
 }
