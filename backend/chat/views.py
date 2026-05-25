@@ -6,6 +6,8 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
 from asgiref.sync import async_to_sync
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
 
 from chat.services.llm_service import get_chat_response
 from .serializers import MessageSerializer as SchemaMessage
@@ -24,6 +26,21 @@ class HealthCheckView(APIView):
 class ChatView(APIView):
     permission_classes = [AllowAny]
     authentication_classes = []
+    @swagger_auto_schema(
+    request_body=SchemaMessage,
+    responses={
+        200: openapi.Response('Success', openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            properties={
+                'companyName': openapi.Schema(type=openapi.TYPE_STRING),
+                'reply': openapi.Schema(type=openapi.TYPE_STRING),
+            }
+        )),
+        400: 'Bad Request',
+        500: 'Server Error',
+        503: 'Service Unavailable'
+    }
+)
     def post(self, request, *args, **kwargs):
         """Handle chat request, mirroring previous logic."""
         data = request.data
