@@ -26,7 +26,8 @@ INSTALLED_APPS = [
     'corsheaders',
     'rest_framework',
     # Local apps
-    'drf_yasg',
+    'chat',
+    'drf_yasg'
 
 ]
 

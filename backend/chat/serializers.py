@@ -1,36 +1,36 @@
 from rest_framework import serializers
 from typing import List, Optional
 import datetime
+from .models import Session
 
 class MessageSerializer(serializers.Serializer):
     """Serializer for a single chat message."""
     role = serializers.CharField()
     content = serializers.CharField()
 
-# Alias to keep original import name used in services
-Message = MessageSerializer
 
 class ChatRequestSerializer(serializers.Serializer):
     """Serializer for the request payload sent to the chat endpoint."""
     messages = MessageSerializer(many=True)
+
 
 class ChatResponseSerializer(serializers.Serializer):
     """Serializer for the response returned by the chat endpoint."""
     reply = serializers.CharField()
 
 class ChatInputSerializer(serializers.Serializer):
-    """Simple input serializer used for single‑message requests."""
+    """Simple input serializer used for single-message requests."""
     content = serializers.CharField()
 
-class ConversationCreateSerializer(serializers.Serializer):
+class SessionCreateSerializer(serializers.ModelSerializer):
     """Serializer for creating a new conversation."""
-    title = serializers.CharField(default="New Conversation", allow_blank=True, required=False)
+    class Meta:
+        model = Session
+        fields = ["session_id", "title", "created_at"]
+        read_only_fields = ["session_id", "created_at"]
 
-class ConversationTitleUpdateSerializer(serializers.Serializer):
-    """Serializer for updating a conversation's title."""
-    title = serializers.CharField()
 
-class ConversationResponseSerializer(serializers.Serializer):
+class SessionResponseSerializer(serializers.Serializer):
     """Serializer for returning conversation details."""
     id = serializers.CharField()
     title = serializers.CharField()

@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 from langchain_groq import ChatGroq
 from langchain_core.messages import HumanMessage, SystemMessage, AIMessage
 
-from chat.serializers import Message
+from chat.serializers import MessageSerializer
 
 # Load environment variables from .env file
 load_dotenv()
@@ -12,7 +12,7 @@ load_dotenv()
 MODEL_ID = "llama-3.3-70b-versatile"
 
 
-def get_chat_response(messages: List[Message]) -> str:
+def get_chat_response(messages: List[MessageSerializer]) -> str:
     """
     Send user message (with conversation history) to the LLM and return the assistant's reply as a string.
     This function now supports general-purpose conversation rather than brand name specific advice.
@@ -25,8 +25,6 @@ def get_chat_response(messages: List[Message]) -> str:
     prompt_template = [system_message]
 
     for msg in messages:
-        # ``messages`` comes from the serializer and is a list of plain dicts
-        # rather than ``Message`` objects. Access the fields via key lookup.
         if isinstance(msg, dict):
             role = msg.get("role")
             content = msg.get("content")
