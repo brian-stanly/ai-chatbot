@@ -3,7 +3,7 @@ from django.views.generic import View
 from django.utils.decorators import method_decorator
 
 from rest_framework.views import APIView
-from rest_framework.generics import CreateAPIView
+from rest_framework.generics import CreateAPIView, ListAPIView
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
 from drf_yasg.utils import swagger_auto_schema
@@ -20,6 +20,10 @@ logger = logging.getLogger(__name__)
 
 class SessionCreateView(CreateAPIView):
     queryset = Session.objects.all()
+    serializer_class = SessionCreateSerializer
+
+class SessionListView(ListAPIView):
+    queryset = Session.objects.all().order_by('-created_at')
     serializer_class = SessionCreateSerializer
 
 
