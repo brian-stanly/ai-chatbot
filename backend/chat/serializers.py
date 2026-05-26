@@ -8,7 +8,6 @@ class MessageSerializer(serializers.Serializer):
     role = serializers.CharField()
     content = serializers.CharField()
 
-
 class ChatRequestSerializer(serializers.Serializer):
     """Serializer for the request payload sent to the chat endpoint."""
     messages = MessageSerializer(many=True)
@@ -18,9 +17,6 @@ class ChatResponseSerializer(serializers.Serializer):
     """Serializer for the response returned by the chat endpoint."""
     reply = serializers.CharField()
 
-class ChatInputSerializer(serializers.Serializer):
-    """Simple input serializer used for single-message requests."""
-    content = serializers.CharField()
 
 class SessionCreateSerializer(serializers.ModelSerializer):
     """Serializer for creating a new conversation."""
