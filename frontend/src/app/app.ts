@@ -1,7 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ChatService, Message } from './services/chat.service';
+import { ChatService, Message, Session } from './services/chat.service';
 import { ChatWindowComponent } from './components/chat-window/chat-window.component';
 import { ChangeDetectorRef } from '@angular/core';
 
@@ -12,10 +12,11 @@ import { ChangeDetectorRef } from '@angular/core';
   templateUrl: './app.html',
   styleUrl: './app.scss',
 })
-export class App {
+export class App implements OnInit {
   title = 'AI Chatbot';
 
   messages: Message[] = [];
+  recentSessions: Session[] = [];
   userInput = '';
   isLoading = false;
   errorMessage = '';
@@ -24,6 +25,22 @@ export class App {
     private chatService: ChatService,
     private cdr: ChangeDetectorRef
   ) {}
+
+  ngOnInit(): void {
+    this.loadSessions();
+  }
+
+  loadSessions(): void {
+    this.chatService.getSessions().subscribe({
+      next: (sessions) => {
+        this.recentSessions = sessions;
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        console.error('Failed to load sessions:', err);
+      }
+    });
+  }
 
   sendMessage(): void {
     const text = this.userInput.trim();
