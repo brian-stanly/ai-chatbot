@@ -10,8 +10,7 @@ from drf_yasg.utils import swagger_auto_schema
 
 from chat.services.llm_service import get_chat_response
 from .serializers import (
-    ChatRequestSerializer, 
-    ChatResponseSerializer,
+    MessageInputSerializer, 
     SessionCreateSerializer
 )
 from .models import Message, Session
@@ -30,17 +29,61 @@ class SessionListView(ListAPIView):
 class ChatView(APIView):
     permission_classes = [AllowAny]
     authentication_classes = []
+
+
     @swagger_auto_schema(
-        request_body=ChatRequestSerializer,
-        responses={200: ChatResponseSerializer}
+        request_body=MessageInputSerializer,
+        responses={200: "ok"}
     )
+    def post(self, request, session_id):
 
-    def post(self, request):
-        print("User %s", request.user)
-        serializer = ChatRequestSerializer(data=request.data)
+        serializer = MessageInputSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        messages = serializer.validated_data["messages"]
-        response = get_chat_response(messages)
+        message = serializer.validated_data["message"]
 
-        return Response({"reply": response})
+        try:
+            session = Session.objects.get(session_id=session_id)
+            
+            # Save the user's new message to the database
+            Message.objects.create(
+                session=session,
+                role="user",
+                content=message
+            )
+
+            # Retrieve the full conversation history (including the new message)
+            messages = Message.objects.filter(session=session).order_by('created_at')
+            
+            # Pass the history to LangChain
+            response = get_chat_response(messages)
+
+            # Save the AI's response to the database
+            Message.objects.create(
+                session=session,
+                role="assistant",
+                content=response
+            )
+            return Response({"reply": response})
+
+        except Session.DoesNotExist:
+            return Response({"error": "Session not found"}, status=404)
+
+        except Exception as exc:
+            raise Exception(exc)
+
+    @swagger_auto_schema(
+        response={
+            200: "Resource deleted"
+        }
+    )
+    def delete(self, request, session_id):
+
+        try:
+            session = Session.objects.all().filter(session_id=session_id)
+            session.delete()
+            return Response({"reply": "Session deleted"}, status=200)
+
+        except Exception as exc:
+            return Response({"error": str(exc)}, status=400)
+        
 

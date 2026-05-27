@@ -12,10 +12,9 @@ class ChatRequestSerializer(serializers.Serializer):
     """Serializer for the request payload sent to the chat endpoint."""
     messages = MessageSerializer(many=True)
 
-
-class ChatResponseSerializer(serializers.Serializer):
-    """Serializer for the response returned by the chat endpoint."""
-    reply = serializers.CharField()
+class MessageInputSerializer(serializers.Serializer):
+    """Serializer for a single chat message."""
+    message = serializers.CharField(required=True)
 
 
 class SessionCreateSerializer(serializers.ModelSerializer):
