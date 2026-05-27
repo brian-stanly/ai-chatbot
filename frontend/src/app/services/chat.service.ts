@@ -25,17 +25,27 @@ export interface Session {
   providedIn: 'root',
 })
 export class ChatService {
-  private readonly apiUrl = 'http://localhost:8000/api/v1/chat/';
-  private readonly sessionListUrl = 'http://localhost:8000/api/v1/session/list/';
+  private readonly baseUrl = 'http://localhost:8000/api/v1/session';
 
   constructor(private http: HttpClient) { }
 
-  sendMessage(messages: Message[]): Observable<ChatResponse> {
-    const body: ChatRequest = { messages };
-    return this.http.post<ChatResponse>(this.apiUrl, body);
+  sendMessage(sessionId: string, message: string): Observable<ChatResponse> {
+    return this.http.post<ChatResponse>(`${this.baseUrl}/${sessionId}/`, { message });
   }
 
   getSessions(): Observable<Session[]> {
-    return this.http.get<Session[]>(this.sessionListUrl);
+    return this.http.get<Session[]>(`${this.baseUrl}/list/`);
+  }
+
+  getSessionMessages(sessionId: string): Observable<Message[]> {
+    return this.http.get<Message[]>(`${this.baseUrl}/${sessionId}/`);
+  }
+
+  createSession(title: string = 'New Conversation'): Observable<Session> {
+    return this.http.post<Session>(`${this.baseUrl}/create/`, { title });
+  }
+
+  deleteSession(sessionId: string): Observable<any> {
+    return this.http.delete<any>(`${this.baseUrl}/${sessionId}/`);
   }
 }

@@ -11,7 +11,8 @@ from drf_yasg.utils import swagger_auto_schema
 from chat.services.llm_service import get_chat_response
 from .serializers import (
     MessageInputSerializer, 
-    SessionCreateSerializer
+    SessionCreateSerializer,
+    MessageSerializer
 )
 from .models import Message, Session
 
@@ -85,5 +86,20 @@ class ChatView(APIView):
 
         except Exception as exc:
             return Response({"error": str(exc)}, status=400)
-        
 
+    @swagger_auto_schema(
+        responses={200: MessageSerializer(many=True)}
+    )
+    def get(self, request, session_id):
+
+        try:
+            session = Session.objects.get(session_id=session_id)
+            messages = Message.objects.filter(session=session).order_by('created_at')
+            serializer = MessageSerializer(messages, many=True)
+            return Response(serializer.data, status=200)
+
+        except Session.DoesNotExist:
+            return Response({"error": "Session not found"}, status=404)
+
+        except Exception as exc:
+            return Response({"error": str(exc)}, status=400)
