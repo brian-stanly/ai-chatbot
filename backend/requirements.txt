@@ -6,3 +6,4 @@ langchain-core
 langchain-groq
 python-dotenv
 pydantic
+drf-yasg

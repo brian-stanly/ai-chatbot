@@ -1,4 +1,0 @@
-langchain
-transformers
-torch
-langchain-huggingface

@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Location } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ChatService, Message, Session } from './services/chat.service';
 import { ChatWindowComponent } from './components/chat-window/chat-window.component';
@@ -24,7 +25,8 @@ export class App implements OnInit {
 
   constructor(
     private chatService: ChatService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private location: Location
   ) {}
 
   ngOnInit(): void {
@@ -35,17 +37,19 @@ export class App implements OnInit {
     this.chatService.getSessions().subscribe({
       next: (sessions) => {
         this.recentSessions = sessions;
-        if (autoSelectFirst) {
-          if (sessions.length > 0) {
-            // Auto-select the first session if no active session, or if the active one was deleted
-            const activeExists = this.currentSession && sessions.some(s => s.session_id === this.currentSession?.session_id);
-            if (!activeExists) {
-              this.selectSession(sessions[0]);
-            }
+        // Check for sessionId in URL query params
+        const queryParams = new URLSearchParams(window.location.search);
+        const urlSessionId = queryParams.get('sessionId');
+        if (urlSessionId) {
+          const matching = sessions.find(s => s.session_id === urlSessionId);
+          if (matching) {
+            this.selectSession(matching);
           } else {
-            // If no sessions exist in DB, create one
-            this.createNewSession();
+            // If not found, fallback to auto selection
+            this.autoSelectSession(sessions, autoSelectFirst);
           }
+        } else {
+          this.autoSelectSession(sessions, autoSelectFirst);
         }
         this.cdr.detectChanges();
       },
@@ -55,11 +59,26 @@ export class App implements OnInit {
     });
   }
 
+  private autoSelectSession(sessions: Session[], autoSelectFirst: boolean): void {
+    if (autoSelectFirst) {
+      if (sessions.length > 0) {
+        const activeExists = this.currentSession && sessions.some(s => s.session_id === this.currentSession?.session_id);
+        if (!activeExists) {
+          this.selectSession(sessions[0]);
+        }
+      } else {
+        this.createNewSession();
+      }
+    }
+  }
+
   selectSession(session: Session): void {
     this.currentSession = session;
     this.errorMessage = '';
     this.isLoading = true;
     this.messages = [];
+    // Update URL with sessionId
+    this.location.replaceState(`?sessionId=${session.session_id}`);
     this.chatService.getSessionMessages(session.session_id).subscribe({
       next: (msgs) => {
         this.messages = msgs;
