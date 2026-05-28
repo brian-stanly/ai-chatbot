@@ -1,6 +1,5 @@
 from rest_framework import serializers
 from typing import List, Optional
-import datetime
 from .models import Session
 
 class MessageSerializer(serializers.Serializer):
@@ -8,9 +7,6 @@ class MessageSerializer(serializers.Serializer):
     role = serializers.CharField()
     content = serializers.CharField()
 
-class ChatRequestSerializer(serializers.Serializer):
-    """Serializer for the request payload sent to the chat endpoint."""
-    messages = MessageSerializer(many=True)
 
 class MessageInputSerializer(serializers.Serializer):
     """Serializer for a single chat message."""
