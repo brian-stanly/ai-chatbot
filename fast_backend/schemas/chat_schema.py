@@ -1,5 +1,7 @@
-from pydantic import BaseModel
 import uuid
+from typing import List
+from pydantic import BaseModel
+
 from datetime import datetime
 
 class ChatSessionResponse(BaseModel):
@@ -15,3 +17,8 @@ class ChatMessageResponse(BaseModel):
 
 class ChatSessionRequest(BaseModel):
     title: str
+
+class ChatLLMRequest(BaseModel):
+    session_id: uuid.UUID
+    message: str
+
