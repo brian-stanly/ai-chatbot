@@ -8,8 +8,8 @@ from models.message import ChatMessage, ChatSession
 from schemas.chat_schema import ( 
     ChatSessionResponse,
     ChatSessionRequest,
-    ChatLLMRequest,
-    ChatMessageResponse
+    ChatMessageResponse,
+    ChatLLMRequest
 )
 
 router = APIRouter()
@@ -45,12 +45,14 @@ def get_chathistory(
 
 
 @router.post("/v1/session/{session_id}/")
-def llm_respose(payload: ChatLLMRequest,db: Session = Depends(get_db)) -> List[ChatMessageResponse]:
+def llm_respose(
+    payload: ChatLLMRequest,
+    db: Session = Depends(get_db)) -> List[ChatMessageResponse]:
 
     chat_session = db.get(ChatSession, payload.session_id)
 
     if chat_session is None:
-        HTTPException(
+        raise HTTPException(
             status_code=404,
             detail="Session not found"
         )
