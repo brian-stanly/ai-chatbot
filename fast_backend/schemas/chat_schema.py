@@ -19,6 +19,7 @@ class ChatSessionRequest(BaseModel):
     title: str
 
 class ChatLLMRequest(BaseModel):
-    session_id: uuid.UUID
     message: str
 
+class ChatLLMResponse(BaseModel):
+    reply: str

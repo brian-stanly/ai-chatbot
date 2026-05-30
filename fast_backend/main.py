@@ -13,4 +13,4 @@ app.add_middleware(
     allow_credentials=True
 )
 
-app.include_router(chat.router, prefix="/api", tags=["Chat"])
+app.include_router(chat.router, prefix="/api/v1", tags=["Chat"])
